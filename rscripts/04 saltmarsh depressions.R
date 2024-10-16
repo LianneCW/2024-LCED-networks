@@ -46,7 +46,7 @@ p2 <-AllData |>
        title="Clay layer")
 p2
 p3<- AllData |>
-  group_by(Type,DomPlantName) |>
+  dplyr::group_by(Type,DomPlantName) |>
   summarize(Count=n()) |>
   ggplot(aes(x=Type,y=Count, fill=DomPlantName)) +
   geom_bar(stat="identity") +
@@ -56,7 +56,7 @@ p3<- AllData |>
        fill="Species")
 p3
 p4<- AllData |>
-  group_by(Type,AnnualPerenn) |>
+  dplyr::group_by(Type,AnnualPerenn) |>
   summarize(Count=n()) |>
   ggplot(aes(x=Type,y=Count, fill=AnnualPerenn)) +
   geom_bar(stat="identity") +
@@ -66,7 +66,7 @@ p4<- AllData |>
        fill="Plant functional type")
 p4
 # show all the plots as a panel plot (using the patchwork library)
-combined_plot <- (p1 + p2 + p3 + p4) +
+combined_plot <- (p1 + p2 + p3 + p4)  +
   patchwork::plot_annotation(tag_levels = 'a', tag_suffix = ')')  # Automatically label as a), b), c)
 combined_plot
 
