@@ -9,9 +9,11 @@ library(tidyverse)
 # load the data of the Tuesday Lake foodweb in 1984
 TL84<-cheddar::LoadCommunity("data/Cheddar_Data/TL84",fn='read.csv')
 head(TL84)
+View(TL84)
 attributes(TL84)
-#Inspect the nodes
+#Inspect the nodes and links
 nodesTL84<-data.frame(TL84$nodes)
+linksTL84<-data.frame(TL84$trophic.links)
 
 #plot the food web 
 cheddar::PlotWebByLevel(TL84,
