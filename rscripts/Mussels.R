@@ -64,6 +64,7 @@ OpenWindow <- function(width, height,...)
 # --- Initialization of matrices containing the state variables ---------------
 
 A = M = dA = dM = matrix(nrow=m,ncol=m)    # The state and rate variables
+TimeRec=MusselRec=vector(length=NoFrames)
 
 # --- advective (Gradient) and diffusive (Laplacian) operators ----------------
 
@@ -94,6 +95,7 @@ M=100+(matrix(ncol=m,nrow=m,data=runif(m*m))<=frac)*10
 # Some counters used in the loop below
 Time =  0          # Begin time 
 ii   =  1e6        # Setting the plot counter to max, so that drawing start immediately
+jj = 0
 
 # --- Setting up the figure ---------------------------------------------------
 
@@ -116,12 +118,12 @@ while (Time<=EndTime){   # Here the time loop starts
   # Graphic representation of the model every now and then
   if (ii>=EndTime/NoFrames/dT)
       {
-       image.plot(A, zlim=c(0,Aup), xaxt="n", yaxt="n",
+       fields::image.plot(A, zlim=c(0,Aup), xaxt="n", yaxt="n",
              col = algae.palette(255),asp=1, bty="n",
              legend.shrink = 0.99, legend.width = 1.8)
        title("Algal concentration")      
 
-       image.plot(M, zlim=c(0,2000), xaxt="n", yaxt="n",
+       fields::image.plot(M, zlim=c(0,2000), xaxt="n", yaxt="n",
              col = mussel.palette(255),asp=1, bty="n",
              legend.shrink = 0.99, legend.width = 1.8)
        title("Mussel biomass")
@@ -135,6 +137,10 @@ while (Time<=EndTime){   # Here the time loop starts
        dev.hold()  # Put all updating on hold  
 
        ii=0    # Resetting the plot counter
+       jj=jj+1 # Increasing the Recorder counter
+       
+       TimeRec[jj] = Time*Phi/24 # The time in days
+       MusselRec[jj] = mean(M)   # Mean mussel biomass 
 
       } 
 
@@ -143,4 +149,25 @@ while (Time<=EndTime){   # Here the time loop starts
  
 } # Here the time loop ends
 
+str(TimeRec)
+str(MusselRec)
+max(MusselRec)
+
+data1 <- data.frame(TimeRec, MusselRec)
+
+library(ggplot2)
+p1 <- ggplot(data1, aes(x = TimeRec, y = MusselRec)) +
+  geom_point(color = "darkblue") +
+  labs(title = "", 
+       x = "Time Recorded", 
+       y = "Mussel Biomass") +
+  theme_minimal()
+p1
+
+print(paste("Mean biomass :", mean(M)))
+Consumption = c/h*A*M
+Mortality = d_M*k_M/(M + k_M)*M
+print(paste("Mean biomass :", mean(M)))
+print(paste("Consumption :", mean(Consumption)/mean(M)))
+print(paste("Mortality :", mean(Mortality)/mean(M)))
 
